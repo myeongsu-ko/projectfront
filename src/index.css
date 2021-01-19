@@ -1,0 +1,13 @@
+@font-face {
+  font-family: 'SeoulNamsan';
+  src: url('./assets/fonts/SeoulNamsanJB.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}
+
+@font-face {
+  font-family: 'NotoSansKR';
+  src: url('./assets/fonts/noto-sans-kr.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

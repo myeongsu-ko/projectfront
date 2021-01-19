@@ -1,0 +1,44 @@
+html {
+    overflow: scroll;
+    overflow-x: hidden;
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    font-family: "NotoSansKR";
+}
+
+::-webkit-scrollbar {
+    width: 0px;
+    background: transparent;
+}
+
+body {
+    margin: 0;
+    background-color: #000;
+}
+
+button input {
+    font-family: "NotoSansKR";
+}
+
+input, textarea, select { font-family:inherit; }
+
+
+@keyframes fadeIn {
+    0%   { opacity: 0; }
+    100% { opacity: 1; }
+}
+
+.fadeIn{
+    animation: fadeIn .35s forwards;
+    animation-timing-function: cubic-bezier(0.39, 0.575, 0.565, 1);
+}
+  
+@keyframes fadeOut {
+    0% { opacity: 1}
+    100% { opacity: 0; }
+}
+  
+.fadeOut{
+    animation: fadeOut .3s forwards;
+    animation-timing-function: cubic-bezier(0.47, 0, 0.745, 0.715);
+}
