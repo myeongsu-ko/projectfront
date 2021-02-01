@@ -7,6 +7,9 @@ import SecStorage from '@lib/secureStorage';
 import { RiLogoutBoxRFill } from 'react-icons/ri';
 import imgLogoTop from '@assets/images/s-lok-logo.png';
 import { Box, Button, Menu, MenuItem } from '@material-ui/core';
+
+import AppBar from '@material-ui/core/AppBar';
+
 import Sidebar from './Sidebar';
 
 const Header = () => {
@@ -43,6 +46,8 @@ const Header = () => {
 
   return (
     <>
+          <AppBar position="fixed" style={{zIndex:'1202'}}> 
+        {/* <Toolbar> */}
       <Box style={Styles.s1} display="flex">
         <Box style={{ width: $Dim * 160 }}>
           <Link to="/">
@@ -64,6 +69,7 @@ const Header = () => {
           </Menu>
         </Box>
       </Box>
+      </AppBar>
       <Sidebar/>
     </>
   );

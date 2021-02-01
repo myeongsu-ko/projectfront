@@ -7,7 +7,12 @@ class CommonStore {
     this.Alert = { visible: false, desc: '' };
     this.Confirm = { visible: false, desc: '', id: '' };
     this.ConfirmFunc = new (function () {})();
+    this.Popup = { visible: false, desc: '', id: '' };
+    this.PopupFunc = new (function () {})();
     this.Title = '';
+    this.Orderfirm = { visible: false, desc: '', id: '' };
+    this.OrderfirmFunc = new (function () {})();
+    this.OrderfirmSearchFunc = new (function () {})();
   }
 
   fSetDim = (info) => {
@@ -33,6 +38,18 @@ class CommonStore {
   fSetTitle = (info) => {
     this.Title = info;
   };
+
+  fSetOrderfirm = (info) => {
+    this.Orderfirm = info;
+  };
+
+  fSetOrderfirmFunc = (info) => {
+    this.OrderfirmFunc = info;
+  };
+
+  fSetOrderfirmSearchFunc = (info) => {
+    this.OrderfirmSearchFunm = info;
+  };
 }
 
 decorate(CommonStore, {
@@ -41,6 +58,9 @@ decorate(CommonStore, {
   Alert: observable,
   Confirm: observable,
   ConfirmFunc: observable,
+  Orderfirm: observable,
+  OrderfirmFunc: observable,
+  OrderfirmSearchFunc: observable,
   Title: observable,
   fSetDim: action,
   fSetState: action,
@@ -48,6 +68,9 @@ decorate(CommonStore, {
   fSetConfirm: action,
   fSetConfirmFunc: action,
   fSetTitle: action,
+  fSetOrderfirm: action,
+  fSetOrderfirmFunc: action,
+  fSetOrderfirmSearchFunc: action,
 });
 
 export default CommonStore;

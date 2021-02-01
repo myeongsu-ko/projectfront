@@ -7,6 +7,7 @@ import * as serviceWorker from '@root/serviceWorker';
 import { Provider } from 'mobx-react';
 import RootStore from '@stores/RootStore';
 import '@root/index.css';
+import '../node_modules/realgrid/dist/realgrid-sky-blue.css'
 
 const rootStore = new RootStore();
 

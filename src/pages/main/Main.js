@@ -5,6 +5,7 @@ import useStores from '@stores/useStores';
 import { useObserver } from 'mobx-react-lite';
 import axios from 'axios';
 import { Box, Button } from '@material-ui/core';
+// import Toolbar from '@material-ui/core/Toolbar';
 
 const Main = () => {
   const { commonStore } = useStores();
@@ -58,15 +59,32 @@ const Main = () => {
     });
   };
 
-  useEffect(() => {
-    fConfirmFunc();
-  }, [$Confirm]);
+  // useEffect(() => {
+  //   console.log('여기 실행됨');
+  //   fConfirmFunc();
+  // }, [$Confirm]);
+
+  // useEffect(() => {
+  //   if (sby1) {
+  //     setSby2Visble(true);
+  //     setSby2('');
+  //   }
+  // }, [sby1]);
+
+  // useEffect(() => {
+  //   if (sby2) {
+  //     setSby3Visble(true);
+  //     setSby4Visble(true);
+  //     setSby3('');
+  //     setSby4('');
+  //   }
+  // }, [sby2]);
 
   return (
     <>
       <Box style={Styles.s1} display="flex" flexDirection="column" alignItems="center">
         <Box style={{ width: $Dim * 500, height: $Dim * 200, marginTop: $Dim * 20 }} display="flex" flexDirection="column" alignItems="center" justifyContent="center">
-          <Button variant="contained" style={{ width: $Dim * 300, height: $Dim * 70, fontSize: $Dim * 25, backgroundColor: '#323232', color: '#ffffff' }} onClick={fAlert}>
+          <Button variant="contained" style={{ width: $Dim * 300, height: $Dim * 70, fontSize: $Dim * 25, backgroundColor: '#323232', color: '#ffffff', marginTop: $Dim * 20 }} onClick={fAlert}>
             Alert
           </Button>
           <Button variant="contained" style={{ width: $Dim * 300, height: $Dim * 70, marginTop: $Dim * 10, fontSize: $Dim * 25, backgroundColor: '#323232', color: '#ffffff' }} onClick={fConfirm}>

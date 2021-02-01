@@ -10,10 +10,11 @@ import Alert from '@components/common/Alert';
 import Confirm from '@components/common/Confirm';
 import Box from '@material-ui/core/Box';
 import Interceptor from '@components/common/Interceptor';
+import Orderfirm from 'components/common/Orderfirm';
 
 const MainLayout = ({ location, history }) => {
   const { commonStore, userStore, routeStore } = useStores();
-  const { $Loading, $Alert, $setAlert, $Confirm, $setConfirm, $ConfirmFunc, $user, $routes } = useObserver(() => ({
+  const { $Loading, $Alert, $setAlert, $OrderfirmSearchFunc, $Confirm, $setConfirm, $ConfirmFunc, $user, $routes, $Orderfirm, $setOrderfirm, $OrderfirmFunc } = useObserver(() => ({
     $Loading: commonStore.Loading,
     $Alert: commonStore.Alert,
     $setAlert: commonStore.fSetAlert,
@@ -22,6 +23,10 @@ const MainLayout = ({ location, history }) => {
     $ConfirmFunc: commonStore.ConfirmFunc,
     $user: userStore.user,
     $routes: routeStore.routes,
+    $Orderfirm: commonStore.Orderfirm,
+    $setOrderfirm: commonStore.fSetOrderfirm,
+    $OrderfirmFunc: commonStore.OrderfirmFunc,
+    $OrderfirmSearchFunc: commonStore.OrderfirmSearchFunc,
   }));
   const [view, setView] = useState(false);
 
@@ -39,7 +44,7 @@ const MainLayout = ({ location, history }) => {
       <Interceptor />
       <Alert visible={$Alert.visible} description={$Alert.desc} onConfirm={() => $setAlert({ visible: false })} />
       <Confirm visible={$Confirm.visible} description={$Confirm.desc} onCancel={() => $setConfirm({ visible: false })} onConfirm={$ConfirmFunc} />
-
+      <Orderfirm visible={$Orderfirm.visible} description={$Orderfirm.desc} onCancel={() => $setOrderfirm({ visible: false })} onConfirm={$OrderfirmFunc} onSearch={$OrderfirmSearchFunc} />
       {view && (
         <Box className="LayMain">
           <Loading isActive={$Loading} />
