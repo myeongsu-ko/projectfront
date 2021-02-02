@@ -59,10 +59,10 @@ const Main = () => {
     });
   };
 
-  // useEffect(() => {
-  //   console.log('여기 실행됨');
-  //   fConfirmFunc();
-  // }, [$Confirm]);
+  useEffect(() => {
+    console.log('여기 실행됨');
+    fConfirmFunc();
+  }, [$Confirm]);
 
   // useEffect(() => {
   //   if (sby1) {

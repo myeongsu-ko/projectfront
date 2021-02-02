@@ -8,7 +8,7 @@ import axios from 'axios';
 import { GridView, LocalDataProvider } from 'realgrid';
 import { ValueType } from 'realgrid';
 
-const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
+const GetSearch3 = ({ visible3, setVisible3, setStgrade }) => {
   const { commonStore } = useStores();
   const { $Dim } = useObserver(() => ({
     $Dim: commonStore.Dim,
@@ -25,23 +25,24 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
   const [data, setData] = useState();
   const [minorcd, setMinorcd] = useState();
   const size = useRef(null);
+  const stgrade = useRef(null);
 
   //취소버튼 클릭 시
   const onCancel = () => {
-    setVisible2(false);
+    setVisible3(false);
     // setSubclass('');
   };
 
   //첫 테이블 뿌리는거
   const fCount = async () => {
     try {
-      if (rating !== null && bore === null) {
-        let result = await axios.get('/@/test/select2', {
-          params: { Minor: '507', likes: '%' },
+      if (size !== null) {
+        let result = await axios.get('/@/test/select3', {
+          params: { likes: '%' },
         });
-        console.log('size데이터',result.data)
+        console.log('size데이터', result.data);
         provider.current.setRows(result.data);
-        size.current = result.data;
+        stgrade.current = result.data;
       }
     } catch (error) {
       console.log(1, error);
@@ -49,12 +50,12 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
   };
 
   const onConfirm = () => {
-    setSize(data.Minornm);
-    setVisible2(false);
+    setStgrade(data.Minornm);
+    setVisible3(false);
   };
 
   useEffect(() => {
-    if (visible2) {
+    if (visible3) {
       provider.current = new LocalDataProvider();
       gridView.current = new GridView('realgrid');
       gridView.current.setDataSource(provider.current);
@@ -74,7 +75,7 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
       registerCallback();
       fCount();
     }
-  }, [visible2]);
+  }, [visible3]);
   function registerCallback() {
     gridView.current.onCellClicked = function (grid, clickData) {
       console.log('클릭시 데이터', gridView.current.getValues(clickData.itemIndex));
@@ -84,7 +85,7 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
     };
   }
 
-  if (!visible2) return null;
+  if (!visible3) return null;
   return (
     <>
       <Box style={{ position: 'fixed', zIndex: 2000, top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.25)' }} display="flex" justifyContent="center" alignItems="center">
@@ -127,7 +128,6 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
     </>
   );
 };
-
 const fields = [
   {
     fieldName: 'Minornm',
@@ -138,11 +138,11 @@ const fields = [
     dataType: ValueType.TEXT,
   },
   {
-    fieldName: 'Item2',
+    fieldName: 'Item1',
     dataType: ValueType.TEXT,
   },
   {
-    fieldName: 'Item3',
+    fieldName: 'Item2',
     dataType: ValueType.TEXT,
   },
 ];
@@ -181,8 +181,8 @@ const columns = [
     numberFormat: '0',
   },
   {
-    name: 'Item2',
-    fieldName: 'Item2',
+    name: 'Item1',
+    fieldName: 'Item1',
     type: 'data',
     width: '100',
     styles: {
@@ -195,8 +195,8 @@ const columns = [
     numberFormat: '0',
   },
   {
-    name: 'Item3',
-    fieldName: 'Item3',
+    name: 'Item2',
+    fieldName: 'Item2',
     type: 'data',
     width: '100',
     styles: {
@@ -209,5 +209,4 @@ const columns = [
     numberFormat: '0',
   },
 ];
-
-export default GetSearch2;
+export default GetSearch3;

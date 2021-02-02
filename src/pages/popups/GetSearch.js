@@ -5,54 +5,161 @@ import { Box, Button } from '@material-ui/core';
 import imgLogo from '@assets/images/img_eng_mark.png';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
+// eslint-disable-next-line import/no-duplicates
 import { GridView, LocalDataProvider } from 'realgrid';
+// eslint-disable-next-line import/no-duplicates
 import { ValueType } from 'realgrid';
+import { nullLiteral } from '../../../../../../AppData/Local/Microsoft/TypeScript/4.1/node_modules/@babel/types/lib/index';
 
-const GetSearch = ({ showView4, setShowView4, setType, showView3, setShowView3, setPart, showView2, setShowView2, showView, setShowView, setSubclass, setVisible, visible }) => {
+const GetSearch = ({ setDisc, setStem ,subclass, stem, part, setSeat, setRating, setType, setPart, setSubclass, setVisible, visible }) => {
+  console.log('!!!!!!!!!!!!!!!!!!!', part);
   const { commonStore } = useStores();
   const { $Dim } = useObserver(() => ({
     $Dim: commonStore.Dim,
   }));
+  //리스트
+  const [data, setData] = useState();
+  const [minorcd, setMinorcd] = useState();
+  // const [remark, setRemark] = useState();
+  const subClass = useRef(null);
+  const parts = useRef(null);
+  const type = useRef(null);
+  const rating = useRef(null);
+  const seats = useRef(null);
+
+  ///////////////////////////////////////
+  const steams = useRef(null);
+  const discs = useRef(null);
+  const specials = useRef(null);
+  const bores = useRef(null);
+  const ends = useRef(null);
+  const bodys = useRef(null);
+  ///////////////////////////////////////
 
   //취소버튼 클릭 시
   const onCancel = () => {
     setVisible(false);
+    subClass.current = null;
     // setSubclass('');
+  };
+
+  //첫 테이블 뿌리는거
+  const fCount = async () => {
+    try {
+      console.log('파트써렌트', parts.current);
+      console.log('썹클래스써렌트', subClass.current);
+
+      if(steams.current !== null){
+        let result = await axios.get('/@/test/select1_1', {
+          params: { Minor: '503', Item1: '061001', Item2: subclass.Item2, Minornm: '%' },
+        });
+        provider.current.setRows(result.data);
+        discs.current = result.data;
+      }
+      else if (seats.current !== null) {
+        console.log('지금여기', subclass);
+        console.log('왜 들어오노');
+        let result = await axios.get('/@/test/select1_1', {
+          params: { Minor: '502', Item1: '061001', Item2: subclass.Item2, Minornm: '%' },
+        });
+        provider.current.setRows(result.data);
+        steams.current = result.data;
+      } else if (part === 'BD') {
+        let result = await axios.get('/@/test/select1', {
+          params: { Minor: '501', Item1: '061001', Minornm: '%' },
+        });
+        provider.current.setRows(result.data);
+        seats.current = result.data;
+      } else if (subClass.current === null && parts.current === null) {
+        let result = await axios.get('/@/test/select1', {
+          params: { Minor: '062', Item1: '061001', Minornm: '%' },
+        });
+        provider.current.setRows(result.data);
+        subClass.current = result.data;
+      } else if (subClass.current !== null && parts.current === null) {
+        let result2 = await axios.get('/@/test/select1', {
+          params: { Minor: '499', Item1: minorcd, Minornm: '%' },
+        });
+        provider.current.setRows(result2.data);
+        parts.current = result2.data;
+        setWrite('%');
+        // setData(result.data)
+        console.log(1111, parts.current);
+      } else if (parts.current !== null) {
+        if (type.current === null) {
+          let result3 = await axios.get('/@/test/select1', {
+            params: { Minor: '498', Item1: minorcd, Minornm: '%' },
+          });
+          provider.current.setRows(result3.data);
+          type.current = result3.data;
+          setWrite('%');
+        } else {
+          let result4 = await axios.get('/@/test/select1', {
+            params: { Minor: '505', Item1: ' ', Minornm: '%' },
+          });
+          provider.current.setRows(result4.data);
+          rating.current = result4.data;
+          console.log(rating.current);
+        }
+
+        // setData(result.data)
+        console.log(1111, type.current);
+      }
+    } catch (error) {
+      console.log(1, error);
+    }
+  };
+
+  const bdCount = async () => {
+    try {
+      if (part === 'BD') {
+        let result = await axios.get('/@/test/select1', {
+          params: { Minor: '501', Item1: '061001', Minornm: '%' },
+        });
+        provider.current.setRows(result.data);
+        seats.current = result.data;
+      }
+    } catch (error) {
+      console.log(1, error);
+    }
   };
 
   //확인버튼 클릭 시
   const onConfirm = () => {
-    if (subClass.current !== null && Part.current === null) {
-      console.log('여기 들간다')
+    console.log('확인시 썹클래스', subClass.current);
+    console.log('확인시 파트', parts.current);
+    console.log('확인시 타입', type.current);
+    if(discs.current !== null){
+      console.log('여기 들간다222');
+      setDisc(data);
+      setVisible(false);
+    }
+    else if( steams.current !== null){
+      console.log('여기 들간다111');
+      setStem(data);
+      setVisible(false);
+    }
+    else if (part === 'BD') {
+      console.log('여기 들간다111');
+      setSeat(data);
+      setVisible(false);
+    } else if (subClass.current !== null && parts.current === null && type.current === null && rating.current === null) {
+      console.log('여기 들간다');
       setSubclass(data);
       setVisible(false);
-    }
-
-    if(Part.current !== null && subClass.current !== null){
-      console.log('여기도 들간다')
+    } else if (parts.current !== null && type.current === null && rating.current === null) {
+      console.log('여기도 들간다');
       setPart(data);
       setVisible(false);
-    }
-
-    
-    //밑에 칸이 있다면 이 함수를 실행(3번째 칸 열지말지)
-    if (showView) {
-      console.log('리마크 보자', remark);
-      if (remark !== 'BD') {
-        setShowView2(true);
-      } else {
-        setShowView3(true);
-      }
-      if (showView2 === false) {
-        setPart(data);
-      }
-    }
-    if (showView2) {
-      if (showView4 === false) {
-        setType(data);
-      }
-
-      setShowView4(true);
+    } else if (type.current !== null && rating.current === null) {
+      console.log('여기도 들간다2');
+      setType(data);
+      setVisible(false);
+    } else if (rating.current !== null) {
+      console.log('여기도 들간다3');
+      setRating(data);
+      setVisible(false);
+      console.log('마무리까진 됨');
     }
   };
 
@@ -67,59 +174,32 @@ const GetSearch = ({ showView4, setShowView4, setType, showView3, setShowView3, 
     });
   };
 
-  //리스트
-  const [data, setData] = useState();
-  const [minorcd, setMinorcd] = useState();
-  const [remark, setRemark] = useState();
-  const subClass = useRef(null);
-  const Part = useRef(null);
-
-  //첫 테이블 뿌리는거
-  const fCount = async () => {
-    try {
-      if (subClass.current === null ) {
-        console.log('에러??');
-        let result = await axios.get('/@/test/select1', {
-          params: { Minor: '062', Item1: '061001', Minornm: '%' },
-        });
-        provider.current.setRows(result.data);
-        subClass.current = result.data;
-      }
-      if (subClass.current !== null) {
-        let result2 = await axios.get('/@/test/select1', {
-          params: { Minor: '499', Item1: minorcd, Minornm: '%' },
-        });
-        provider.current.setRows(result2.data);
-        Part.current = result2.data;
-        setWrite('%');
-        // setData(result.data)
-      }
-    } catch (error) {
-      console.log(1, error);
-    }
-  };
-
   //조회버튼
   const fCount2 = async () => {
-    try {
-      if (Part.current === null) {
-        let result1 = await axios.get('/@/test/select1', {
-          params: { Minor: '062', Item1: '061001', Minornm: write.search },
-        });
-        provider.current.setRows(result1.data);
-      } 
-      if (Part.current !== null) {
-        let result2 = await axios.get('/@/test/select1', {
-          params: { Minor: '499', Item1: minorcd, Minornm: write.search },
-        });
-        provider.current.setRows(result2.data);
-      } 
-      setWrite('%');
-    } catch (error) {
-      console.log(1, error);
-    }
+    // try {
+    //   console.log('값잇나?', subClass.current);
+    //   // console.log('클릭한 데이터의 리마크',data.Remark)
+    //   if (parts.current === null) {
+    //     let result1 = await axios.get('/@/test/select1', {
+    //       params: { Minor: '062', Item1: '061001', Minornm: write.search },
+    //     });
+    //     provider.current.setRows(result1.data);
+    //     console.log('여기');
+    //   } else if (subClass.current !== null) {
+    //     console.log('보자보자');
+    //     console.log('이전 클릭한 데이터', data);
+    //     let result2 = await axios.get('/@/test/select1', {
+    //       params: { Minor: '499', Item1: data.Minorcd, Minornm: write.search },
+    //     });
+    //     console.log(2, result2.data);
+    //     provider.current.setRows(result2.data);
+    //     console.log('여기2');
+    //   }
+    //   setWrite('%');
+    // } catch (error) {
+    //   console.log(1, error);
+    // }
   };
-
 
   useEffect(() => {
     if (visible) {
@@ -140,28 +220,20 @@ const GetSearch = ({ showView4, setShowView4, setType, showView3, setShowView3, 
         visible: false,
       });
       registerCallback();
+      fCount();
+      // bdCount();
+      // fCount2();
     }
-
-    fCount();
-
-    // if (showView !== false) {
-    //   console.log('여기들어옴');
-    //   fCount3();
-    // }
-    // if (showView4 !== false){
-    //   console.log('여기들어옴');
-    //   fCount4();
-    // }
   }, [visible]);
-
   function registerCallback() {
     gridView.current.onCellClicked = function (grid, clickData) {
-      setData(gridView.current.getValues(clickData.itemIndex).Minornm);
+      console.log('클릭시 데이터', gridView.current.getValues(clickData.itemIndex));
+      setData(gridView.current.getValues(clickData.itemIndex));
       setMinorcd(gridView.current.getValues(clickData.itemIndex).Minorcd);
-      setRemark(gridView.current.getValues(clickData.itemIndex).Remark);
+      // setRemark(gridView.current.getValues(clickData.itemIndex).Remark);
     };
   }
-  //visible이 false 이면 null 리턴
+
   if (!visible) return null;
   return (
     <>
@@ -186,7 +258,7 @@ const GetSearch = ({ showView4, setShowView4, setType, showView3, setShowView3, 
                   </Button>
                 </Box>
                 <Box style={{ display: 'flex', justifyContent: 'center' }}>
-                  <div id="realgrid" style={{ width: '435px', height: '500px' }} />
+                  <div id="realgrid" style={{ width: '435px', height: '500px', marginTop: 20 }} />
                 </Box>
               </Box>
             </Box>{' '}
@@ -220,6 +292,10 @@ const fields = [
   },
   {
     fieldName: 'Minorcd',
+    dataType: ValueType.TEXT,
+  },
+  {
+    fieldName: 'Item2',
     dataType: ValueType.TEXT,
   },
 ];
@@ -260,37 +336,37 @@ const columns = [
 ];
 
 export default GetSearch;
-  // //테이블 뿌리기2
-  // const fCount3 = async () => {
-  //   try {
-  //     if (subClass.current !== null) {
-  //       let result = await axios.get('/@/test/select1', {
-  //         params: { Minor: '499', Item1: minorcd, Minornm: '%' },
-  //       });
-  //       provider.current.setRows(result.data);
-  //       setWrite('%');
-  //       // setData(result.data);
-  //     } else {
-  //       let result2 = await axios.get('/@/test/select1', {
-  //         params: { Minor: '498', Item1: minorcd, Minornm: '%' },
-  //       });
-  //       provider.current.setRows(result2.data);
-  //       setWrite('%');
-  //       // setData(result.data);
-  //     }
-  //   } catch (error) {
-  //     console.log(1, error);
-  //   }
-  // };
-  // const fCount4 = async () => {
-  //   try {
-  //     let result = await axios.get('/@/test/select1', {
-  //       params: { Minor: '063', Item1: '%', Minornm: '%' },
-  //     });
-  //     provider.current.setRows(result.data);
-  //     setWrite('%');
-  //     // setData(result.data);
-  //   } catch (error) {
-  //     console.log(1, error);
-  //   }
-  // };
+// //테이블 뿌리기2
+// const fCount3 = async () => {
+//   try {
+//     if (subClass.current !== null) {
+//       let result = await axios.get('/@/test/select1', {
+//         params: { Minor: '499', Item1: minorcd, Minornm: '%' },
+//       });
+//       provider.current.setRows(result.data);
+//       setWrite('%');
+//       // setData(result.data);
+//     } else {
+//       let result2 = await axios.get('/@/test/select1', {
+//         params: { Minor: '498', Item1: minorcd, Minornm: '%' },
+//       });
+//       provider.current.setRows(result2.data);
+//       setWrite('%');
+//       // setData(result.data);
+//     }
+//   } catch (error) {
+//     console.log(1, error);
+//   }
+// };
+// const fCount4 = async () => {
+//   try {
+//     let result = await axios.get('/@/test/select1', {
+//       params: { Minor: '063', Item1: '%', Minornm: '%' },
+//     });
+//     provider.current.setRows(result.data);
+//     setWrite('%');
+//     // setData(result.data);
+//   } catch (error) {
+//     console.log(1, error);
+//   }
+// };
