@@ -5,53 +5,58 @@ import { Box, Button } from '@material-ui/core';
 import imgLogo from '@assets/images/img_eng_mark.png';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
-import { GridView, LocalDataProvider } from 'realgrid';
-import { ValueType } from 'realgrid';
+import { GridView, LocalDataProvider, ValueType } from 'realgrid';
 
-const GetSearch3 = ({ visible3, setVisible3, setStgrade }) => {
+const GetSearch3 = ({ iconHandle, resetHandle, visible3, setVisible3, setStgrade }) => {
   const { commonStore } = useStores();
-  const { $Dim } = useObserver(() => ({
+  const { $Dim, $setAlert } = useObserver(() => ({
     $Dim: commonStore.Dim,
+    $setAlert: commonStore.fSetAlert,
   }));
   let provider = useRef(null);
   let gridView = useRef(null);
-  const [write, setWrite] = useState('%');
+  const fAlert = () => {
+    $setAlert({ visible: true, desc: '행을 클릭하세요' });
+    return;
+  };
+  const [write, setWrite] = useState({
+    search: '%',
+  });
   const inputHandle = (e) => {
     setWrite({
       ...write,
       [e.target.name]: e.target.value,
     });
   };
-  const [data, setData] = useState();
-  const [minorcd, setMinorcd] = useState();
-  const size = useRef(null);
-  const stgrade = useRef(null);
+  const [data, setData] = useState(null);
+
+  //확인버튼 클릭 시
+  const onConfirm = () => {
+    if (data === null) {
+      fAlert();
+    } else {
+      setStgrade(data);
+      setData(null);
+      setVisible3(false);
+      setWrite({
+        search: '%',
+      });
+    }
+  };
 
   //취소버튼 클릭 시
   const onCancel = () => {
     setVisible3(false);
-    // setSubclass('');
+    setWrite({
+      search: '%',
+    });
   };
 
-  //첫 테이블 뿌리는거
-  const fCount = async () => {
-    try {
-      if (size !== null) {
-        let result = await axios.get('/@/test/select3', {
-          params: { likes: '%' },
-        });
-        console.log('size데이터', result.data);
-        provider.current.setRows(result.data);
-        stgrade.current = result.data;
-      }
-    } catch (error) {
-      console.log(1, error);
-    }
-  };
-
-  const onConfirm = () => {
-    setStgrade(data.Minornm);
-    setVisible3(false);
+  const exam = async () => {
+    let result = await axios.get('/@/test/select3', {
+      params: { likes: write.search },
+    });
+    provider.current.setRows(result.data);
   };
 
   useEffect(() => {
@@ -66,6 +71,7 @@ const GetSearch3 = ({ visible3, setVisible3, setStgrade }) => {
       gridView.current.displayOptions.selectionStyle = 'rows';
       gridView.current.columnByName('Minornm').editable = false;
       gridView.current.columnByName('Remark').editable = false;
+      gridView.current.sortingOptions.enabled = false;
       gridView.current.setCheckBar({
         visible: false,
       });
@@ -73,15 +79,14 @@ const GetSearch3 = ({ visible3, setVisible3, setStgrade }) => {
         visible: false,
       });
       registerCallback();
-      fCount();
+      // fCount();
+      exam();
     }
   }, [visible3]);
+  //클릭시 데이터
   function registerCallback() {
     gridView.current.onCellClicked = function (grid, clickData) {
-      console.log('클릭시 데이터', gridView.current.getValues(clickData.itemIndex));
       setData(gridView.current.getValues(clickData.itemIndex));
-      setMinorcd(gridView.current.getValues(clickData.itemIndex).Minorcd);
-      // setRemark(gridView.current.getValues(clickData.itemIndex).Remark);
     };
   }
 
@@ -98,11 +103,7 @@ const GetSearch3 = ({ visible3, setVisible3, setStgrade }) => {
               <Box style={{ height: $Dim * 300, fontSize: $Dim * 10, fontWeight: 'bold' }}>
                 <Box>
                   <TextField id="outlined-basic" name="search" placeholder="검색어를 입력하세요" variant="outlined" style={{ width: $Dim * 150 }} onChange={inputHandle} />
-                  <Button
-                    onClick={() => {}}
-                    variant="contained"
-                    style={{ marginLeft: $Dim * 15, width: $Dim * 60, height: $Dim * 30, backgroundColor: '#348fe2', fontSize: $Dim * 10, color: '#ffffff' }}
-                  >
+                  <Button onClick={exam} variant="contained" style={{ marginLeft: $Dim * 15, width: $Dim * 60, height: $Dim * 30, backgroundColor: '#348fe2', fontSize: $Dim * 10, color: '#ffffff' }}>
                     조회
                   </Button>
                 </Box>
@@ -143,6 +144,10 @@ const fields = [
   },
   {
     fieldName: 'Item2',
+    dataType: ValueType.TEXT,
+  },
+  {
+    fieldName: 'Minorcd',
     dataType: ValueType.TEXT,
   },
 ];

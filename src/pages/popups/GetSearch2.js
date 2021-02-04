@@ -5,17 +5,23 @@ import { Box, Button } from '@material-ui/core';
 import imgLogo from '@assets/images/img_eng_mark.png';
 import TextField from '@material-ui/core/TextField';
 import axios from 'axios';
-import { GridView, LocalDataProvider } from 'realgrid';
-import { ValueType } from 'realgrid';
+import { GridView, LocalDataProvider, ValueType } from 'realgrid';
 
-const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
+const GetSearch2 = ({ iconHandle, resetHandle, setSize, bore, visible2, setVisible2 }) => {
   const { commonStore } = useStores();
-  const { $Dim } = useObserver(() => ({
+  const { $Dim, $setAlert } = useObserver(() => ({
     $Dim: commonStore.Dim,
+    $setAlert: commonStore.fSetAlert,
   }));
+  const fAlert = () => {
+    $setAlert({ visible: true, desc: '행을 클릭하세요' });
+    return;
+  };
   let provider = useRef(null);
   let gridView = useRef(null);
-  const [write, setWrite] = useState('%');
+  const [write, setWrite] = useState({
+    search: '%',
+  });
   const inputHandle = (e) => {
     setWrite({
       ...write,
@@ -23,34 +29,50 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
     });
   };
   const [data, setData] = useState();
-  const [minorcd, setMinorcd] = useState();
+  useEffect(() => {
+    size.current = null;
+  }, [resetHandle]);
+
+  useEffect(() => {
+    size.current = null;
+  }, [iconHandle]);
   const size = useRef(null);
+
+  //확인버튼 클릭 시
+  const onConfirm = () => {
+    if (data === null) {
+      fAlert();
+    } else {
+      setSize(data);
+      setVisible2(false);
+      setWrite({
+        search: '%',
+      });
+    }
+  };
 
   //취소버튼 클릭 시
   const onCancel = () => {
     setVisible2(false);
+    setWrite({
+      search: '%',
+    });
     // setSubclass('');
   };
 
-  //첫 테이블 뿌리는거
-  const fCount = async () => {
-    try {
-      if (rating !== null && bore === null) {
-        let result = await axios.get('/@/test/select2', {
-          params: { Minor: '507', likes: '%' },
-        });
-        console.log('size데이터',result.data)
-        provider.current.setRows(result.data);
-        size.current = result.data;
-      }
-    } catch (error) {
-      console.log(1, error);
+  //테이블실행 및 조회
+  const exam = async () => {
+    if (bore === null) {
+      let result = await axios.get('/@/test/select2', {
+        params: { Minor: visible2.Minor, likes: write.search },
+      });
+      provider.current.setRows(result.data);
+    } else {
+      let result = await axios.get('/@/test/select2_1', {
+        params: { Minor: visible2.Minor, likes: write.search, Item3: bore.Remark }, //////////////////////////////////////
+      });
+      provider.current.setRows(result.data);
     }
-  };
-
-  const onConfirm = () => {
-    setSize(data.Minornm);
-    setVisible2(false);
   };
 
   useEffect(() => {
@@ -65,6 +87,7 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
       gridView.current.displayOptions.selectionStyle = 'rows';
       gridView.current.columnByName('Minornm').editable = false;
       gridView.current.columnByName('Remark').editable = false;
+      gridView.current.sortingOptions.enabled = false;
       gridView.current.setCheckBar({
         visible: false,
       });
@@ -72,15 +95,14 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
         visible: false,
       });
       registerCallback();
-      fCount();
+      // fCount();
+      exam();
     }
   }, [visible2]);
+
   function registerCallback() {
     gridView.current.onCellClicked = function (grid, clickData) {
-      console.log('클릭시 데이터', gridView.current.getValues(clickData.itemIndex));
       setData(gridView.current.getValues(clickData.itemIndex));
-      setMinorcd(gridView.current.getValues(clickData.itemIndex).Minorcd);
-      // setRemark(gridView.current.getValues(clickData.itemIndex).Remark);
     };
   }
 
@@ -97,11 +119,7 @@ const GetSearch2 = ({ setSize,rating, bore, visible2, setVisible2 }) => {
               <Box style={{ height: $Dim * 300, fontSize: $Dim * 10, fontWeight: 'bold' }}>
                 <Box>
                   <TextField id="outlined-basic" name="search" placeholder="검색어를 입력하세요" variant="outlined" style={{ width: $Dim * 150 }} onChange={inputHandle} />
-                  <Button
-                    onClick={() => {}}
-                    variant="contained"
-                    style={{ marginLeft: $Dim * 15, width: $Dim * 60, height: $Dim * 30, backgroundColor: '#348fe2', fontSize: $Dim * 10, color: '#ffffff' }}
-                  >
+                  <Button onClick={exam} variant="contained" style={{ marginLeft: $Dim * 15, width: $Dim * 60, height: $Dim * 30, backgroundColor: '#348fe2', fontSize: $Dim * 10, color: '#ffffff' }}>
                     조회
                   </Button>
                 </Box>
@@ -143,6 +161,10 @@ const fields = [
   },
   {
     fieldName: 'Item3',
+    dataType: ValueType.TEXT,
+  },
+  {
+    fieldName: 'Minorcd',
     dataType: ValueType.TEXT,
   },
 ];

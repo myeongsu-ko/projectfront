@@ -21,7 +21,7 @@ const Alert = ({ visible, description, confirmText = '확인', onConfirm }) => {
   if (!visible) return null;
   return (
     <>
-      <Box style={{ position: 'fixed', zIndex: 2000, top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.25)' }} display="flex" justifyContent="center" alignItems="center">
+      <Box style={{ position: 'fixed', zIndex: 3000, top: 0, left: 0, width: '100%', height: '100%', background: 'rgba(0, 0, 0, 0.25)' }} display="flex" justifyContent="center" alignItems="center">
         <Box style={{ width: $Dim * 200, background: '#fff', borderRadius: '4px', boxShadow: '0px 0px 8px rgba(0, 0, 0, 0.125)' }}>
           <Box style={{ background: '#e6e6e6', padding: $Dim * 5, borderTopLeftRadius: '4px', borderTopRightRadius: '4px' }} display="flex">
             <img src={imgLogo} alt="logo" style={{ width: $Dim * 40 }} />
